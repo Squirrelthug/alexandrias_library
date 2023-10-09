@@ -1,0 +1,6 @@
+{
+  "current_bay": 0,
+  "current_shelf": 0,
+  "current_volume": 0,
+  "current_page": 0
+}
