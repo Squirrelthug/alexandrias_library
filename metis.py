@@ -1,6 +1,4 @@
 import hashlib
-import random
-
 
 class Metis:
     def __init__(self, characters, page_length):
@@ -13,6 +11,7 @@ class Metis:
         """
         self.characters = characters
         self.page_length = page_length
+        self.num_chars = len(characters)
 
     def calculate_seed(self, bay, shelf, volume, page):
         """
@@ -29,7 +28,14 @@ class Metis:
         """
         seed_str = f"{bay}-{shelf}-{volume}-{page}"
         seed_hash = hashlib.sha256(seed_str.encode()).hexdigest()
-        return int(seed_hash, 16)
+        seed = int(seed_hash, 16)
+
+        # Apply modular arithmetic and bit-shifting
+        seed = (seed ^ (seed >> 30)) * 0xbf58476d1ce4e5b9
+        seed = (seed ^ (seed >> 27)) * 0x94d049bb133111eb
+        seed = seed ^ (seed >> 31)
+
+        return seed % (2**64)
 
     def generate_page(self, bay, shelf, volume, page):
         """
@@ -45,5 +51,13 @@ class Metis:
         str: The generated page.
         """
         seed = self.calculate_seed(bay, shelf, volume, page)
-        random.seed(seed)
-        return ''.join(random.choice(self.characters) for _ in range(self.page_length))
+        page_text = []
+
+        for i in range(self.page_length):
+            # Use modular arithmetic and bit-shifting to generate a deterministic sequence
+            char_index = (seed + i) % self.num_chars
+            page_text.append(self.characters[char_index])
+            # Update seed to create a sequence
+            seed = (seed * 6364136223846793005 + 1) % (2**64)
+
+        return ''.join(page_text)
