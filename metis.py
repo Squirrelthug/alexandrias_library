@@ -1,17 +1,25 @@
 import hashlib
 
 class Metis:
-    def __init__(self, characters, page_length):
+    def __init__(self, characters, page_length, max_bay, max_shelf, max_volume, max_page):
         """
         Initialize the Metis algorithm.
 
         Parameters:
         characters (str): The set of characters to use.
         page_length (int): The number of characters per page.
+        max_bay (int): Maximum value for bay.
+        max_shelf (int): Maximum value for shelf.
+        max_volume (int): Maximum value for volume.
+        max_page (int): Maximum value for page.
         """
         self.characters = characters
         self.page_length = page_length
         self.num_chars = len(characters)
+        self.max_bay = max_bay
+        self.max_shelf = max_shelf
+        self.max_volume = max_volume
+        self.max_page = max_page
 
     def calculate_seed(self, bay, shelf, volume, page):
         """
@@ -61,3 +69,26 @@ class Metis:
             seed = (seed * 6364136223846793005 + 1) % (2**64)
 
         return ''.join(page_text)
+
+    def search_string(self, search_str, max_results=10):
+        """
+        Search for a string within the generated pages.
+
+        Parameters:
+        search_str (str): The string to search for.
+        max_results (int): The maximum number of results to return.
+
+        Returns:
+        list: A list of tuples containing the bay, shelf, volume, and page numbers where the string was found.
+        """
+        results = []
+        for bay in range(self.max_bay):
+            for shelf in range(self.max_shelf):
+                for volume in range(self.max_volume):
+                    for page in range(self.max_page):
+                        page_text = self.generate_page(bay, shelf, volume, page)
+                        if search_str in page_text:
+                            results.append((bay, shelf, volume, page))
+                            if len(results) >= max_results:
+                                return results
+        return results
