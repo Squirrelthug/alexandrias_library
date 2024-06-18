@@ -71,24 +71,5 @@ class Metis:
         return ''.join(page_text)
 
     def search_string(self, search_str, max_results=10):
-        """
-        Search for a string within the generated pages.
-
-        Parameters:
-        search_str (str): The string to search for.
-        max_results (int): The maximum number of results to return.
-
-        Returns:
-        list: A list of tuples containing the bay, shelf, volume, and page numbers where the string was found.
-        """
-        results = []
-        for bay in range(self.max_bay):
-            for shelf in range(self.max_shelf):
-                for volume in range(self.max_volume):
-                    for page in range(self.max_page):
-                        page_text = self.generate_page(bay, shelf, volume, page)
-                        if search_str in page_text:
-                            results.append((bay, shelf, volume, page))
-                            if len(results) >= max_results:
-                                return results
-        return results
+        #TODO: Implement string search algorithm
+        pass
